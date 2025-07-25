@@ -1,0 +1,2 @@
+## Welcome to the roomate organization website
+This is a website I am making quickly to practice some web development fundementals. The goal of this website is to help my upcoming roomates and I organize what items we'll need to bring to our new appartement! The main areas I want to practice with this is database and backend development. I will be using AI tools in the creation of this website, but far less so in the two educational topics I've identified above (and more in an education manner).   

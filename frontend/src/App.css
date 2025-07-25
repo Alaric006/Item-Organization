@@ -1,0 +1,42 @@
+.App {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Courier New', monospace;
+}
+
+.main-content {
+  padding: 2rem;
+  min-height: calc(100vh - 200px);
+}
+
+.content-placeholder {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 3rem;
+  text-align: center;
+  border: 4px solid #fff;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.content-placeholder h2 {
+  color: #333;
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  text-shadow: 2px 2px 0px #ddd;
+  font-family: 'Courier New', monospace;
+}
+
+.content-placeholder p {
+  color: #555;
+  font-size: 1.2rem;
+  margin: 1rem 0;
+  font-weight: bold;
+}
+
+.content-placeholder strong {
+  color: #ff6b6b;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}

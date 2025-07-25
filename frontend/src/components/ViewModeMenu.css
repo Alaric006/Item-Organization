@@ -1,0 +1,74 @@
+.view-mode-menu {
+  background: linear-gradient(45deg, #ff9a9e, #fecfef, #fecfef, #b794f6);
+  padding: 1.5rem 2rem;
+  border-bottom: 4px solid #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.menu-container {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.mode-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: 3px solid #333;
+  border-radius: 20px;
+  background: #fff;
+  color: #333;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mode-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  background: #f8f8f8;
+}
+
+.mode-button.active {
+  background: linear-gradient(135deg, #ff6b6b, #ffa726);
+  color: #fff;
+  border-color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(255, 107, 107, 0.4);
+}
+
+.mode-button.active:hover {
+  background: linear-gradient(135deg, #ff5252, #ff9800);
+}
+
+.mode-icon {
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+}
+
+.mode-text {
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .menu-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .mode-button {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+  }
+}
