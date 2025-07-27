@@ -1,0 +1,56 @@
+.item-list-elem {
+  background: linear-gradient(135deg, #ff6b6b, #ffa726);
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 15px;
+  border: 3px solid #fff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.item-list-elem p {
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  text-shadow: 1px 1px 0px #000;
+  margin: 0;
+  flex: 1;
+  text-align: center;
+}
+
+.item-list-elem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #ffa726, #ff6b6b);
+}
+
+.item-list-elem:last-child {
+  margin-bottom: 0;
+}
+
+.item-list-elem input[type='text'] {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid #fff;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  font-size: 1rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  text-shadow: none;
+}
+
+.item-list-elem input[type='text']:focus {
+  outline: none;
+  border-color: #fff;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}

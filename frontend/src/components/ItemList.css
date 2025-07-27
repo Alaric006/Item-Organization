@@ -34,39 +34,6 @@
   padding-top: 1rem;
 }
 
-.item-list-elem {
-  background: linear-gradient(135deg, #ff6b6b, #ffa726);
-  padding: 0.75rem 1rem;
-  margin-bottom: 0.5rem;
-  border-radius: 15px;
-  border: 3px solid #fff;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-}
-
-.item-list-elem p {
-  color: #fff;
-  font-family: 'Courier New', monospace;
-  font-weight: bold;
-  text-shadow: 1px 1px 0px #000;
-  margin: 0;
-  flex: 1;
-  text-align: center;
-}
-
-.item-list-elem:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  background: linear-gradient(135deg, #ffa726, #ff6b6b);
-}
-
-.item-list-elem:last-child {
-  margin-bottom: 0;
-}
-
 .add-span {
   display: flex;
   gap: 0.5rem;

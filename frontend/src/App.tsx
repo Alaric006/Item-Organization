@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Header from './components/Header';
-import ItemList, { Item } from './components/ItemList';
+import ItemList from './components/ItemList';
+import {Item} from './components/ItemListElem';
 import './App.css';
 
 function App() {
@@ -31,6 +32,18 @@ function App() {
     };
   };
 
+  const createUpdateItemFunction = (currentList: Item[], setList: React.Dispatch<React.SetStateAction<Item[]>>) => {
+    return (id: string, newName: string) => {
+      setList(currentList.map((item) => {
+        if (item.id === id) {
+          return { ...item, name: newName};
+        } else {
+          return item;
+        }
+      }));
+    };
+  };
+
   return (
     <div className="App">
       <Header 
@@ -47,12 +60,14 @@ function App() {
               listItems={needToBuy}
               addItem={createAddItemFunction(needToBuy, setNeedToBuy)}
               removeItem={createRemoveItemFunction(needToBuy, setNeedToBuy)}
+              updateItem={createUpdateItemFunction(needToBuy, setNeedToBuy)}
             />
             <ItemList
               listName='Want to Bring'
               listItems={wantToBuy}
               addItem={createAddItemFunction(wantToBuy, setWantToBuy)}
               removeItem={createRemoveItemFunction(wantToBuy, setWantToBuy)}
+              updateItem={createUpdateItemFunction(wantToBuy, setWantToBuy)}
             />
           </div>
         </div>
