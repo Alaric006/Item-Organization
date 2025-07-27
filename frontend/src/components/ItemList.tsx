@@ -1,13 +1,19 @@
-import React, {useState} from 'react';
+import React, {useState, useCallback} from 'react';
 import './ItemList.css';
+
+export interface Item {
+    id: string;
+    name: string;
+}
 
 interface ItemListProps {
     listName: string;
-    listItems: string[];
+    listItems: Item[];
     addItem: (itemName: string) => void;
+    removeItem: (itemID: string) => void;
 }
 
-const ItemList: React.FC<ItemListProps> = ({listName, listItems, addItem}) => {
+const ItemList: React.FC<ItemListProps> = ({listName, listItems, addItem, removeItem}) => {
     const [inputValue, setInputValue] = useState('');
 
     const handleAddItem = () => {
@@ -16,6 +22,8 @@ const ItemList: React.FC<ItemListProps> = ({listName, listItems, addItem}) => {
             setInputValue('');
         }
     };
+
+    const handleRemoveItem = useCallback((id: string) => () => removeItem(id), [removeItem]);
 
     return (
         <div className='item-list-container'>
@@ -31,7 +39,10 @@ const ItemList: React.FC<ItemListProps> = ({listName, listItems, addItem}) => {
             </span>
             <ul className='item-list'>
                 {listItems.map((item) => (
-                    <li key={item} className='item-list-elem'><p>{item}</p></li>
+                    <li key={item.id} className='item-list-elem'>
+                        <p> {item.name}</p>
+                        <button className='remove-item-btn' onClick={handleRemoveItem(item.id)}>-</button>
+                    </li>
                 ))}  
             </ul>
         </div>

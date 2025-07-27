@@ -43,6 +43,8 @@
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
 .item-list-elem p {
@@ -51,6 +53,8 @@
   font-weight: bold;
   text-shadow: 1px 1px 0px #000;
   margin: 0;
+  flex: 1;
+  text-align: center;
 }
 
 .item-list-elem:hover {
@@ -126,4 +130,35 @@
 .add-button:active {
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.remove-item-btn {
+  background: linear-gradient(135deg, #ff5252, #ff1744);
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-family: 'Courier New', monospace;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  text-shadow: 1px 1px 0px #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+}
+
+.remove-item-btn:hover {
+  background: linear-gradient(135deg, #ff1744, #d32f2f);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.remove-item-btn:active {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
