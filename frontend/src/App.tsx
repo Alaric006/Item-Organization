@@ -5,9 +5,10 @@ import {Item} from './components/ItemListElem';
 import './App.css';
 
 function App() {
-  const [currentUser, setCurrentUser] = useState('Alex');
   
-  const users = ['Alex', 'Jamie', 'Sam', 'Taylor'];
+  const users = ['Unassigned', 'Alaric', 'Andrew', 'Joseph', 'Tanish'];
+
+  const [currentUser, setCurrentUser] = useState(users[0]);
 
   const [needToBuy, setNeedToBuy] = useState<Item[]>([]);
   const [wantToBuy, setWantToBuy] = useState<Item[]>([]);
@@ -20,7 +21,8 @@ function App() {
     return (itemName: string) => {
       const newItem: Item = {
         id: crypto.randomUUID(),
-        name: itemName
+        name: itemName,
+        assignedTo: currentUser
       };
       setList([...currentList, newItem]);
     };
@@ -32,7 +34,7 @@ function App() {
     };
   };
 
-  const createUpdateItemFunction = (currentList: Item[], setList: React.Dispatch<React.SetStateAction<Item[]>>) => {
+  const createUpdateItemNameFunction = (currentList: Item[], setList: React.Dispatch<React.SetStateAction<Item[]>>) => {
     return (id: string, newName: string) => {
       setList(currentList.map((item) => {
         if (item.id === id) {
@@ -43,6 +45,18 @@ function App() {
       }));
     };
   };
+
+  const createUpdateItemAssignedToFunction = (currentList: Item[], setList: React.Dispatch<React.SetStateAction<Item[]>>) => {
+    return (id: string, newAssignedTo: string) => {
+      setList(currentList.map((item) => {
+        if (item.id === id) {
+          return { ...item, assignedTo: newAssignedTo};
+        } else {
+          return item;
+        }
+      }));
+    }
+  }
 
   return (
     <div className="App">
@@ -60,14 +74,18 @@ function App() {
               listItems={needToBuy}
               addItem={createAddItemFunction(needToBuy, setNeedToBuy)}
               removeItem={createRemoveItemFunction(needToBuy, setNeedToBuy)}
-              updateItem={createUpdateItemFunction(needToBuy, setNeedToBuy)}
+              updateItemName={createUpdateItemNameFunction(needToBuy, setNeedToBuy)}
+              updateItemAssignedTo={createUpdateItemAssignedToFunction(needToBuy, setNeedToBuy)}
+              users={users}
             />
             <ItemList
               listName='Want to Bring'
               listItems={wantToBuy}
               addItem={createAddItemFunction(wantToBuy, setWantToBuy)}
               removeItem={createRemoveItemFunction(wantToBuy, setWantToBuy)}
-              updateItem={createUpdateItemFunction(wantToBuy, setWantToBuy)}
+              updateItemName={createUpdateItemNameFunction(wantToBuy, setWantToBuy)}
+              updateItemAssignedTo={createUpdateItemAssignedToFunction(wantToBuy, setWantToBuy)}
+              users={users}
             />
           </div>
         </div>

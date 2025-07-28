@@ -8,10 +8,12 @@ interface ItemListProps {
     listItems: Item[];
     addItem: (itemName: string) => void;
     removeItem: (itemID: string) => void;
-    updateItem: (id: string, newName: string) => void;
+    updateItemName: (id: string, newName: string) => void;
+    updateItemAssignedTo: (id: string, newAssignedTo: string) => void;
+    users: string[];
 }
 
-const ItemList: React.FC<ItemListProps> = ({listName, listItems, addItem, removeItem, updateItem}) => {
+const ItemList: React.FC<ItemListProps> = ({listName, listItems, addItem, removeItem, updateItemName, updateItemAssignedTo, users}) => {
     const [inputValue, setInputValue] = useState('');
 
     const handleAddItem = () => {
@@ -41,7 +43,9 @@ const ItemList: React.FC<ItemListProps> = ({listName, listItems, addItem, remove
                         key={item.id}
                         item={item}
                         onRemove={handleRemoveItem}
-                        onUpdate={updateItem}
+                        onUpdateName={updateItemName}
+                        onUpdateAssignedTo={updateItemAssignedTo}
+                        users={users}
                     />
                 ))}  
             </ul>
