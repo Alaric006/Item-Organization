@@ -1,21 +1,17 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Header from './components/Header';
 import ItemList from './components/ItemList';
-import { DatabaseItem, DatabaseUser, Item, User } from './types';
-import { loadItems, loadUsers, loadLists, transformDatabaseItemToComponent } from "./services/database";
+import { DatabaseItem, DatabaseList, DatabaseUser, Item, User } from './types';
+import { loadItems, loadUsers, loadLists, transformDatabaseItemToComponent, addItem, dateToSQLFormat} from "./services/database";
 import './App.css';
 
 function App() {
   const [users, setUsers] = useState<DatabaseUser[]>([]);
-  const [items, setItems] = useState<DatabaseItem[]>([])
+  const [items, setItems] = useState<DatabaseItem[]>([]);
+  const [lists, setLists] = useState<DatabaseList[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<string>("Unassigned");
-
-  const needList = useMemo(() => mapItemsToList("need"), [items]);
-  const wantToBringList = useMemo(() => mapItemsToList("want_to_bring"), [items]);
-  const willBringList = useMemo(() => mapItemsToList("will_bring"), [items]);
-  const willBuyList = useMemo(() => mapItemsToList("will_buy"), [items]);
 
   // Loads Content from Database
   useEffect(() => {
@@ -24,10 +20,11 @@ function App() {
         setLoading(true);
         setError(null);
 
-        const [usersData, itemsData] = await Promise.all([loadUsers(), loadItems()]);
+        const [usersData, itemsData, listsData] = await Promise.all([loadUsers(), loadItems(), loadLists()]);
 
         setUsers(usersData);
         setItems(itemsData);
+        setLists(listsData);
 
         const unassignedInUsers = (user: DatabaseUser) => user.name === "Unassigned";
 
@@ -62,10 +59,44 @@ function App() {
     return user.name;
   }
 
-
   const handleUserChange = (userName: string) => {
     setCurrentUser(userName);
   };
+
+  const createAddItemFunction = (listName: string) => {
+    return async (itemName: string) => {
+      // Optimisitic update -- Add to UI Immediately
+      const listId = lists.find(dbList => dbList.name === listName);
+      const assignedToId = users.find(dbUser => dbUser.name === currentUser);
+
+      if(!listId || !assignedToId) {
+        console.error("Could not find list or user!");
+        return;
+      }
+
+      const tempItem: DatabaseItem = {
+        id: crypto.randomUUID(),
+        name: itemName,
+        created_at: dateToSQLFormat(new Date()),
+        updated_at: dateToSQLFormat(new Date()),
+        list_id: listId,
+        assigned_to: assignedToId
+      }
+      setItems(prevItems => [...prevItems, tempItem]);
+
+      // Now Add to Database
+      try {
+        await addItem(itemName, assignedToId.id, listId.id);
+
+        const updatedItems = await loadItems();
+        setItems(updatedItems);
+      } catch (error) {
+        // Filter out optimistic addition
+        setItems(prevItems => prevItems.filter(item => item.id !== tempItem.id));
+        console.error("Failed to add item:", error);
+      }
+    }
+  }
 
   return (
     <div className="App">
@@ -79,24 +110,19 @@ function App() {
         <div className="main-container">
           <h2>📦 Add move in items here!</h2>
           <div className='lists-container'>
-            <ItemList
-              listName="Need"
-              listItems={needList}
-              users={users.map(dbUserToUserName)}
-              addItem={() => {}}
-              removeItem={() => {}}
-              updateItemName={() => {}}
-              updateItemAssignedTo={() => {}}
-            />
-            <ItemList
-              listName="Want to Bring"
-              listItems={wantToBringList}
-              users={users.map(dbUserToUserName)}
-              addItem={() => {}}
-              removeItem={() => {}}
-              updateItemName={() => {}}
-              updateItemAssignedTo={() => {}}
-            />
+            {lists.map((list) => {
+              return (
+                <ItemList
+                  listName={list.display_name}
+                  listItems={mapItemsToList(list.name)}
+                  users={users.map(dbUserToUserName)}
+                  addItem={createAddItemFunction(list.name)}
+                  removeItem={() => {}}
+                  updateItemName={() => {}}
+                  updateItemAssignedTo={() => {}}
+                />
+              );
+            })}
           </div>
         </div>
       </main>
