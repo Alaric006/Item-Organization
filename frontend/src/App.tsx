@@ -1,68 +1,77 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Header from './components/Header';
 import ItemList from './components/ItemList';
-import { Item } from './types';
+import { DatabaseItem, DatabaseUser, Item, User } from './types';
+import { loadItems, loadUsers, loadLists, transformDatabaseItemToComponent } from "./services/database";
 import './App.css';
 
 function App() {
-  
-  const users = ['Unassigned', 'Alaric', 'Andrew', 'Joseph', 'Tanish'];
+  const [users, setUsers] = useState<DatabaseUser[]>([]);
+  const [items, setItems] = useState<DatabaseItem[]>([])
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<string>("Unassigned");
 
-  const [currentUser, setCurrentUser] = useState(users[0]);
+  const needList = useMemo(() => mapItemsToList("need"), [items]);
+  const wantToBringList = useMemo(() => mapItemsToList("want_to_bring"), [items]);
+  const willBringList = useMemo(() => mapItemsToList("will_bring"), [items]);
+  const willBuyList = useMemo(() => mapItemsToList("will_buy"), [items]);
 
-  const [needToBuy, setNeedToBuy] = useState<Item[]>([]);
-  const [wantToBuy, setWantToBuy] = useState<Item[]>([]);
+  // Loads Content from Database
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-  const handleUserChange = (user: string) => {
-    setCurrentUser(user);
-  };
+        const [usersData, itemsData] = await Promise.all([loadUsers(), loadItems()]);
 
-  const createAddItemFunction = (currentList: Item[], setList: React.Dispatch<React.SetStateAction<Item[]>>) => {
-    return (itemName: string) => {
-      const newItem: Item = {
-        id: crypto.randomUUID(),
-        name: itemName,
-        assignedTo: currentUser
-      };
-      setList([...currentList, newItem]);
-    };
-  };
+        setUsers(usersData);
+        setItems(itemsData);
 
-  const createRemoveItemFunction = (currentList: Item[], setList: React.Dispatch<React.SetStateAction<Item[]>>) => {
-    return (removeID: string) => {
-      setList(currentList.filter(item => item.id !== removeID));
-    };
-  };
+        const unassignedInUsers = (user: DatabaseUser) => user.name === "Unassigned";
 
-  const createUpdateItemNameFunction = (currentList: Item[], setList: React.Dispatch<React.SetStateAction<Item[]>>) => {
-    return (id: string, newName: string) => {
-      setList(currentList.map((item) => {
-        if (item.id === id) {
-          return { ...item, name: newName};
-        } else {
-          return item;
+        if (usersData.length > 0) {
+          if (usersData.some(unassignedInUsers)) {
+            setCurrentUser("Unassigned");
+          } else {
+            setCurrentUser(usersData[0].name);
+          }
         }
-      }));
+      } catch (err) {
+        setError("Failed to load data from database");
+        console.error("Error: ", err);
+      } finally {
+        setLoading(false);
+      }
     };
-  };
 
-  const createUpdateItemAssignedToFunction = (currentList: Item[], setList: React.Dispatch<React.SetStateAction<Item[]>>) => {
-    return (id: string, newAssignedTo: string) => {
-      setList(currentList.map((item) => {
-        if (item.id === id) {
-          return { ...item, assignedTo: newAssignedTo};
-        } else {
-          return item;
-        }
-      }));
+    loadData();
+  }, []);
+
+  /** UTILITY FUNCTIONS */
+  function mapItemsToList(list_name: string): Item[] {
+    if (!items || items.length === 0) {
+      return [];
     }
+    return items.filter(item => item.list_id.name === list_name)
+      .map(transformDatabaseItemToComponent);
   }
+
+  function dbUserToUserName(user: DatabaseUser): string {
+    return user.name;
+  }
+
+
+  const handleUserChange = (userName: string) => {
+    setCurrentUser(userName);
+  };
 
   return (
     <div className="App">
       <Header 
         currentUser={currentUser}
-        users={users}
+        users={users.map(dbUserToUserName)}
         onUserChange={handleUserChange}
       />
       <main className="main-content">
@@ -70,22 +79,22 @@ function App() {
           <h2>📦 Add move in items here!</h2>
           <div className='lists-container'>
             <ItemList
-              listName='Need to Buy'
-              listItems={needToBuy}
-              addItem={createAddItemFunction(needToBuy, setNeedToBuy)}
-              removeItem={createRemoveItemFunction(needToBuy, setNeedToBuy)}
-              updateItemName={createUpdateItemNameFunction(needToBuy, setNeedToBuy)}
-              updateItemAssignedTo={createUpdateItemAssignedToFunction(needToBuy, setNeedToBuy)}
-              users={users}
+              listName="Need"
+              listItems={needList}
+              users={users.map(dbUserToUserName)}
+              addItem={() => {}}
+              removeItem={() => {}}
+              updateItemName={() => {}}
+              updateItemAssignedTo={() => {}}
             />
             <ItemList
-              listName='Want to Bring'
-              listItems={wantToBuy}
-              addItem={createAddItemFunction(wantToBuy, setWantToBuy)}
-              removeItem={createRemoveItemFunction(wantToBuy, setWantToBuy)}
-              updateItemName={createUpdateItemNameFunction(wantToBuy, setWantToBuy)}
-              updateItemAssignedTo={createUpdateItemAssignedToFunction(wantToBuy, setWantToBuy)}
-              users={users}
+              listName="Want to Bring"
+              listItems={wantToBringList}
+              users={users.map(dbUserToUserName)}
+              addItem={() => {}}
+              removeItem={() => {}}
+              updateItemName={() => {}}
+              updateItemAssignedTo={() => {}}
             />
           </div>
         </div>

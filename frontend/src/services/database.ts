@@ -1,19 +1,22 @@
 import {supabase} from "../lib/supabase";
 import { DatabaseItem, DatabaseUser, DatabaseList, Item } from "../types"
 
-export const loadItems = async (): Promise<DatabaseItem[]> => {
+export const loadItems = async (): Promise<any> => {
+
     const {data, error} = await supabase.from('items').select(`
             id,
             name,
             created_at,
             updated_at,
-            assigned_to:users(id, name),
+            assigned_to:users!assigned_to(id, name),
             list_id:lists(id, name, display_name)
         `).order('created_at', {ascending: true});
     if (error) {
         console.error("Error loading items: ", error);
         throw error;
     }
+
+    console.log(data);
 
     return data ?? [];
 }
