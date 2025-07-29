@@ -1,5 +1,6 @@
 import React, {useState, useCallback} from 'react';
-import ItemListElem, {Item} from "./ItemListElem";
+import ItemListElem from "./ItemListElem";
+import { Item } from '../types';
 import './ItemList.css';
 
 

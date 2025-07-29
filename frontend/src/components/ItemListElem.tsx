@@ -1,11 +1,6 @@
 import React, {useState} from "react"
 import './ItemListElem.css'
-
-export interface Item {
-    id: string;
-    name: string;
-    assignedTo: string;
-}
+import { Item } from '../types'
 
 interface ItemListElemProps {
     item: Item;

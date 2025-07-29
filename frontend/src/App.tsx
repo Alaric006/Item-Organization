@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Header from './components/Header';
 import ItemList from './components/ItemList';
-import {Item} from './components/ItemListElem';
+import { Item } from './types';
 import './App.css';
 
 function App() {
