@@ -5,9 +5,10 @@ interface HeaderProps {
   currentUser: string;
   users: string[];
   onUserChange: (user: string) => void;
+  loading?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ currentUser, users, onUserChange }) => {
+const Header: React.FC<HeaderProps> = ({ currentUser, users, onUserChange, loading = false }) => {
   return (
     <header className="header-banner">
       <div className="header-content">
@@ -21,6 +22,7 @@ const Header: React.FC<HeaderProps> = ({ currentUser, users, onUserChange }) => 
             className="user-dropdown"
             value={currentUser}
             onChange={(e) => onUserChange(e.target.value)}
+            disabled={loading}
           >
             {users.map((user) => (
               <option key={user} value={user}>
@@ -28,8 +30,19 @@ const Header: React.FC<HeaderProps> = ({ currentUser, users, onUserChange }) => 
               </option>
             ))}
           </select>
+          {loading && (
+            <div className="loading-indicator">
+              <div className="loading-spinner">⏳</div>
+              <span className="loading-text">Loading...</span>
+            </div>
+          )}
         </div>
       </div>
+      {loading && (
+        <div className="loading-bar-container">
+          <div className="loading-bar"></div>
+        </div>
+      )}
     </header>
   );
 };

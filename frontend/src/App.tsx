@@ -73,6 +73,7 @@ function App() {
         currentUser={currentUser}
         users={users.map(dbUserToUserName)}
         onUserChange={handleUserChange}
+        loading={loading}
       />
       <main className="main-content">
         <div className="main-container">
