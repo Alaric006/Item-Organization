@@ -3,9 +3,12 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express, { Request, Response } from "express";
+
+// Import API endpoints
 import newItemRouter from "./routers/newItem";
 import removeItemRouter from "./routers/removeItem";
 import updateItemNameRouter from "./routers/updateItemName";
+import updateItemAssignedToRouter from "./routers/updateItemAssignedTo";
 
 const app = express();
 
@@ -24,6 +27,7 @@ app.listen(PORT, '0.0.0.0', () => {
     throw new Error(error.message);
 })
 
-app.use("/new/item", newItemRouter);
+app.use("/item/new", newItemRouter);
 app.use("/item", removeItemRouter);
-app.use("/update/item", updateItemNameRouter);
+app.use("/item/update/name", updateItemNameRouter);
+app.use("/item/update/assigned_to", updateItemAssignedToRouter);
