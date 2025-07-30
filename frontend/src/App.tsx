@@ -2,8 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Header from './components/Header';
 import ItemList from './components/ItemList';
 import { DatabaseItem, DatabaseList, DatabaseUser, Item, User } from './types';
-import { loadItems, loadUsers, loadLists, transformDatabaseItemToComponent, removeItem, dateToSQLFormat, updateItemName, updateItemAssignedTo} from "./services/database";
-import {addItem} from "./services/api"
+import { loadItems, loadUsers, loadLists, transformDatabaseItemToComponent, dateToSQLFormat, updateItemName, updateItemAssignedTo} from "./services/database";
+import {addItem, removeItem} from "./services/api"
 import './App.css';
 
 function App() {

@@ -9,13 +9,13 @@ removeItemRouter.delete("/:id", async (req, res) => {
     if (!removeId || removeId.trim().length === 0) {
         return res.status(400).json({
             success: false,
-            message: "Item ID is required"
+            error: "Item ID is required"
         });
     }
 
     try {
         await removeItem(removeId);
-        return res.status(204).json({
+        return res.status(200).json({
             success: true,
             message: "Item deleted successfully"
         });
@@ -23,7 +23,7 @@ removeItemRouter.delete("/:id", async (req, res) => {
         console.error(error);
         res.status(500).json({
             success: false,
-            message: "Internal server error"
+            error: "Internal server error"
         });
     }
 });

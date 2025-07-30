@@ -1,7 +1,8 @@
 const BACKEND="http://localhost:3000"
+
 export const addItem = async (itemName: string, assignedToUserId: string, listId: string) => {
     try {
-      const response = await fetch(`${BACKEND}/new/item`, {
+      const response = await fetch(`${BACKEND}/item/new`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -29,3 +30,25 @@ export const addItem = async (itemName: string, assignedToUserId: string, listId
       throw error;
     }
 };
+
+export const removeItem = async(itemId: string) => {
+  try {
+    const response = await fetch(`${BACKEND}/item/${itemId}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTPP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    console.log(result);
+
+    if (!result.success) {
+      throw new Error(result.error || 'Failed to remove item');
+    }
+  } catch (error) {
+    console.error('Error removing item:', error);
+    throw error;
+  }
+}
