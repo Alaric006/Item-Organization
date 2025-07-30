@@ -94,6 +94,28 @@ export const removeItem = async (itemId: string): Promise<void> => {
     }
 }
 
+export const updateItemName = async (itemId: string, newName: string): Promise<any> => {
+    const {data, error} = await supabase
+        .from('items')
+        .update({
+            name: newName
+        })
+        .eq('id', itemId)
+        .select(`
+            id,
+            name,
+            created_at,
+            updated_at,
+            assigned_to:users!assigned_to(id, name),
+            list_id:lists(id, name, display_name)
+        `);
+    if (error) {
+        console.error(error);
+        throw error;
+    }
+    return data?.[0];
+}
+
 export const dateToSQLFormat = (date: Date) => {
     return date.toISOString().slice(0, 19).replace("T", " ")
 }

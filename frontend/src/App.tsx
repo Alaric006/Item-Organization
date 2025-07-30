@@ -130,6 +130,46 @@ function App() {
     }
   }
 
+  const createUpdateItemNameFunction = (listName: string) => {
+    return async (id: string, newName: string) => {
+      // Optimistically update name
+      const oldItem: DatabaseItem | undefined = items.find(dbItem => dbItem.id === id);
+      if (!oldItem) {
+        console.error("Could not find item to update name!");
+        return;
+      }
+      const oldName: string = oldItem.name;
+
+      setItems(prevItems => prevItems.map((item: DatabaseItem) => {
+        if (item.id === id) {
+          return {...item, name: newName}
+        } else {
+          return item;
+        }
+      }));
+
+      // Now (attempt to) update the database
+      try {
+        await updateItemName(id, newName);
+        const updatedItems = await loadItems();
+        setItems(updatedItems);
+      } catch (error) {
+        // Undo optimistic update
+        setItems(prevItems => prevItems.map((item: DatabaseItem) => {
+          if (item.id === id) {
+            return {...item, name: oldName}
+          } else {
+            return item;
+          }
+        }));
+
+        console.log("Error failed to update item name:", error);
+      }
+
+
+    }
+  }
+
   return (
     <div className="App">
       <Header 
@@ -150,6 +190,7 @@ function App() {
                   users={users.map(dbUserToUserName)}
                   addItem={createAddItemFunction(list.name)}
                   removeItem={createRemoveItemFunction(list.name)}
+                  updateItemName={createUpdateItemNameFunction(list.name)}
                   updateItemAssignedTo={() => {}}
                 />
               );
