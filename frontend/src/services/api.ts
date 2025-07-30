@@ -52,3 +52,32 @@ export const removeItem = async(itemId: string) => {
     throw error;
   }
 }
+
+export const updateItemName = async (itemId: string, newName: string) => {
+  try {
+    const response = await fetch(`${BACKEND}/item/update/name/${itemId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        newName: newName
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.error || 'Failed to update item name');
+    }
+
+    return result.data;
+  } catch (error) {
+    console.error('Error updating item name:', error);
+    throw error;
+  }
+}
