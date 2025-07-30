@@ -4,6 +4,7 @@ dotenv.config();
 
 import express, { Request, Response } from "express";
 import newItemRouter from "./routers/newItem";
+import removeItemRouter from "./routers/removeItem";
 const app = express();
 
 // Add JSON parsing abilities to express
@@ -22,3 +23,4 @@ app.listen(PORT, '0.0.0.0', () => {
 })
 
 app.use("/new/item", newItemRouter);
+app.use("/item", removeItemRouter);
