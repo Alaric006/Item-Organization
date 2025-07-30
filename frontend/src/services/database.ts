@@ -82,6 +82,18 @@ if (error) {
 return data?.[0];
 }
 
+export const removeItem = async (itemId: string): Promise<void> => {
+    const { error } = await supabase
+        .from('items')
+        .delete()
+        .eq('id', itemId);
+
+    if (error) {
+        console.error("Error removing item: ", error);
+        throw error;
+    }
+}
+
 export const dateToSQLFormat = (date: Date) => {
     return date.toISOString().slice(0, 19).replace("T", " ")
 }

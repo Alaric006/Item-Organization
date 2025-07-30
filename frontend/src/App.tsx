@@ -2,7 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Header from './components/Header';
 import ItemList from './components/ItemList';
 import { DatabaseItem, DatabaseList, DatabaseUser, Item, User } from './types';
-import { loadItems, loadUsers, loadLists, transformDatabaseItemToComponent, addItem, dateToSQLFormat} from "./services/database";
+import { loadItems, loadUsers, loadLists, transformDatabaseItemToComponent, 
+  addItem, removeItem, dateToSQLFormat,
+  updateItemName,} from "./services/database";
 import './App.css';
 
 function App() {
@@ -98,6 +100,36 @@ function App() {
     }
   }
 
+  const createRemoveItemFunction = (listName: string) => {
+    return async (removeId: string) => {
+
+      const itemToRemoveIndex: number = items.findIndex(dbItem => dbItem.id === removeId);
+
+      if(itemToRemoveIndex === -1) {
+        console.error("Could not find item to remove!");
+        return;
+      }
+
+      const itemToRemove = items[itemToRemoveIndex];
+
+      // Optimistic removal -- Remove from UI Immediately
+      setItems(items => items.filter(dbItem => dbItem.id !== removeId));
+
+      // Now remove from database
+      try {
+        await removeItem(removeId);
+
+        const updatedItems = await loadItems();
+        setItems(updatedItems);
+      } catch (error) {
+        // Re-add optimistic removal
+        let prevItems: DatabaseItem[] = items.slice(0, itemToRemoveIndex).concat([itemToRemove], items.slice(itemToRemoveIndex + 1, items.length + 1));
+        setItems(prevItems);
+        console.error("Failed to remove item:", error);
+      }
+    }
+  }
+
   return (
     <div className="App">
       <Header 
@@ -117,8 +149,7 @@ function App() {
                   listItems={mapItemsToList(list.name)}
                   users={users.map(dbUserToUserName)}
                   addItem={createAddItemFunction(list.name)}
-                  removeItem={() => {}}
-                  updateItemName={() => {}}
+                  removeItem={createRemoveItemFunction(list.name)}
                   updateItemAssignedTo={() => {}}
                 />
               );
