@@ -116,6 +116,30 @@ export const updateItemName = async (itemId: string, newName: string): Promise<a
     return data?.[0];
 }
 
+export const updateItemAssignedTo = async (itemId: string, newAssignedToId: string): Promise<any> => {
+    const {data, error} = await supabase
+        .from('items')
+        .update({
+            assigned_to: newAssignedToId
+        })
+        .eq('id', itemId)
+        .select(`
+            id,
+            name,
+            created_at,
+            updated_at,
+            assigned_to:users!assigned_to(id, name),
+            list_id:lists(id, name, display_name)
+        `);
+    
+    if (error) {
+        console.error("Error updating item assigned_to: ", error);
+        throw error;
+    }
+    
+    return data?.[0];
+}
+
 export const dateToSQLFormat = (date: Date) => {
     return date.toISOString().slice(0, 19).replace("T", " ")
 }

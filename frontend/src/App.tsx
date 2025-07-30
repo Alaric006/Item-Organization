@@ -3,8 +3,7 @@ import Header from './components/Header';
 import ItemList from './components/ItemList';
 import { DatabaseItem, DatabaseList, DatabaseUser, Item, User } from './types';
 import { loadItems, loadUsers, loadLists, transformDatabaseItemToComponent, 
-  addItem, removeItem, dateToSQLFormat,
-  updateItemName,} from "./services/database";
+  addItem, removeItem, dateToSQLFormat, updateItemName, updateItemAssignedTo} from "./services/database";
 import './App.css';
 
 function App() {
@@ -163,10 +162,63 @@ function App() {
           }
         }));
 
-        console.log("Error failed to update item name:", error);
+        console.error("Error failed to update item name:", error);
+      }
+    }
+  }
+
+  const createUpdateItemAssignedTo = (listName: string) => {
+    return async (id: string, newAssignedTo: string) => {
+      // Find newAssignedTo User ID with name
+      const newAssignedToUser: DatabaseUser | undefined = users.find(user => user.name === newAssignedTo);
+      if (!newAssignedToUser) {
+        console.error("Could not finding matching user!");
+        return;
       }
 
+      // Find current assignedTo User ID
+      const matchingItem = items.find(item => item.id === id);
+      if (!matchingItem) {
+        console.error("Could not find matching item!");
+        return;
+      }
 
+      // Get user IDs
+      const newAssignedToId = newAssignedToUser.id;
+      const oldAssignedToId = matchingItem.assigned_to.id;
+
+      // Get User Names of assignedTo
+      const oldAssignedTo = matchingItem.assigned_to.name;
+
+
+      // Optimistic update
+      const updatedItems: DatabaseItem[] = items.map((item: DatabaseItem) => {
+        if (item.id === id) {
+          return {...item, assigned_to: {id: newAssignedToId, name: newAssignedTo}};
+        } else {
+          return item;
+        }
+      });
+      setItems(updatedItems);
+
+      // Update Database
+      try {
+        await updateItemAssignedTo(id, newAssignedToId);
+        const updatedItems = await loadItems();
+        setItems(updatedItems);
+      } catch (error) {
+        // Undo optimistic update
+        const prevItems: DatabaseItem[] = items.map((item: DatabaseItem) => {
+          if (item.id === id) {
+            return {...item, assigned_to: {id: oldAssignedToId, name: oldAssignedTo}};
+          } else {
+            return item;
+          }
+        });
+        setItems(prevItems);
+        
+        console.error("Failed to update item assigned_to:", error);
+      }
     }
   }
 
@@ -191,7 +243,7 @@ function App() {
                   addItem={createAddItemFunction(list.name)}
                   removeItem={createRemoveItemFunction(list.name)}
                   updateItemName={createUpdateItemNameFunction(list.name)}
-                  updateItemAssignedTo={() => {}}
+                  updateItemAssignedTo={createUpdateItemAssignedTo(list.name)}
                 />
               );
             })}
