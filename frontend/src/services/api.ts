@@ -81,3 +81,32 @@ export const updateItemName = async (itemId: string, newName: string) => {
     throw error;
   }
 }
+
+export const updateItemAssignedTo = async (itemId: string, newAssignedToId: string) => {
+  try {
+    const response = await fetch(`${BACKEND}/item/update/assigned_to/${itemId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        newAssignedToId: newAssignedToId
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.error || 'Failed to update item assigned to');
+    }
+
+    return result.data;
+  } catch (error) {
+    console.error('Error updating item assigned to:', error);
+    throw error;
+  }
+}
