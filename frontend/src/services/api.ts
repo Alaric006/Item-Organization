@@ -1,5 +1,7 @@
 const BACKEND = process.env.BACKEND;
 
+console.log("Backend URL: ${BACKEND}");
+
 export const addItem = async (itemName: string, assignedToUserId: string, listId: string) => {
     try {
       const response = await fetch(`${BACKEND}/item/new`, {
