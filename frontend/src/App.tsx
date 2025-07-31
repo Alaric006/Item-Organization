@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Header from './components/Header';
 import ItemList from './components/ItemList';
+import BottomNavbar from './components/BottomNavbar';
 import { DatabaseItem, DatabaseList, DatabaseUser, Item, User } from './types';
 import { loadItems, loadUsers, loadLists, transformDatabaseItemToComponent, dateToSQLFormat} from "./services/database";
 import {addItem, removeItem, updateItemName, updateItemAssignedTo} from "./services/api"
@@ -13,6 +14,9 @@ function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<string>("Unassigned");
+  const [showNavbar, setShowNavbar] = useState<boolean>(false);
+  
+  const listRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   // Loads Content from Database
   useEffect(() => {
@@ -46,6 +50,41 @@ function App() {
 
     loadData();
   }, []);
+
+  // Scroll detection logic for bottom navbar
+  useEffect(() => {
+    const checkHeight = () => {
+      const pageHeight = document.documentElement.scrollHeight;
+      const viewportHeight = window.innerHeight;
+      const shouldShow = pageHeight > viewportHeight * 1.5; // Show when content is 50% taller than viewport
+      
+      setShowNavbar(shouldShow);
+      
+      // Add/remove body class for styling adjustments
+      if (shouldShow) {
+        document.body.classList.add('navbar-visible');
+      } else {
+        document.body.classList.remove('navbar-visible');
+      }
+    };
+
+    // Check on mount and when content changes
+    checkHeight();
+    
+    // Check on scroll and resize
+    const handleScroll = () => checkHeight();
+    const handleResize = () => checkHeight();
+    
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleResize);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+      document.body.classList.remove('navbar-visible');
+    };
+  }, [lists, items]); // Re-run when content changes
 
   /** UTILITY FUNCTIONS */
   function mapItemsToList(list_name: string): Item[] {
@@ -222,6 +261,37 @@ function App() {
     }
   }
 
+  // Navigation handler for bottom navbar
+  const handleNavigateToList = (listDisplayName: string) => {
+    const listKey = lists.find(list => list.display_name === listDisplayName)?.name;
+    if (listKey && listRefs.current[listKey]) {
+      listRefs.current[listKey]?.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    }
+  };
+
+  const itemListElems = lists.map((list, index) => {
+    return (
+      <div 
+        key={list.name} 
+        ref={el => { listRefs.current[list.name] = el; }}
+        className="list-section"
+      >
+        <ItemList
+          listName={list.display_name}
+          listItems={mapItemsToList(list.name)}
+          users={users.map(dbUserToUserName)}
+          addItem={createAddItemFunction(list.name)}
+          removeItem={createRemoveItemFunction(list.name)}
+          updateItemName={createUpdateItemNameFunction(list.name)}
+          updateItemAssignedTo={createUpdateItemAssignedTo(list.name)}
+        />
+      </div>
+    );
+  });
+
   return (
     <div className="App">
       <Header 
@@ -234,22 +304,15 @@ function App() {
         <div className="main-container">
           <h2>📦 Add move in items here!</h2>
           <div className='lists-container'>
-            {lists.map((list) => {
-              return (
-                <ItemList
-                  listName={list.display_name}
-                  listItems={mapItemsToList(list.name)}
-                  users={users.map(dbUserToUserName)}
-                  addItem={createAddItemFunction(list.name)}
-                  removeItem={createRemoveItemFunction(list.name)}
-                  updateItemName={createUpdateItemNameFunction(list.name)}
-                  updateItemAssignedTo={createUpdateItemAssignedTo(list.name)}
-                />
-              );
-            })}
+            {itemListElems}
           </div>
         </div>
       </main>
+      <BottomNavbar 
+        listNames={lists.map(list => list.display_name)}
+        onNavigate={handleNavigateToList}
+        isVisible={showNavbar}
+      />
     </div>
   );
 }
