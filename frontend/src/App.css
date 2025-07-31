@@ -51,6 +51,8 @@
   .main-container {
     padding: 1.5rem;
     margin: 0 0.5rem;
+    max-width: calc(100vw - 1rem);
+    box-sizing: border-box;
   }
   
   .main-container h2 {
@@ -62,6 +64,9 @@
     gap: 1rem;
     flex-direction: column;
     align-items: center;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
   }
 }
 
@@ -74,6 +79,7 @@
     padding: 1rem;
     margin: 0;
     border-radius: 15px;
+    max-width: 100vw;
   }
   
   .main-container h2 {

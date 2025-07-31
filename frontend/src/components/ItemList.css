@@ -11,23 +11,42 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Mobile responsive adjustments for item list containers */
+/* Medium and mobile responsive adjustments for item list containers */
 @media (max-width: 768px) {
   .item-list-container {
-    min-width: 280px;
-    max-width: 100%;
+    min-width: 250px;
+    max-width: 90%;
     margin: 0 auto;
+    flex-shrink: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  .item-list-container {
+    min-width: 280px;
+    max-width: 95%;
   }
 }
 
 @media (max-width: 480px) {
   .item-list-container {
     min-width: 0;
-    padding: 1rem;
+    padding: 0.75rem;
+    margin: 0 0.5rem;
+    max-width: calc(100vw - 1rem);
+    box-sizing: border-box;
   }
   
   .add-span input[type='text'] {
-    max-width: 150px;
+    max-width: 120px;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .add-button {
+    width: 40px;
+    height: 40px;
+    font-size: 1.3rem;
   }
 }
 
@@ -140,6 +159,16 @@
   justify-content: center;
   flex-shrink: 0;
   align-self: center;
+}
+
+/* Mobile adjustments for remove button */
+@media (max-width: 480px) {
+  .remove-item-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+    margin-top: 0.25rem;
+  }
 }
 
 .remove-item-btn:hover {
