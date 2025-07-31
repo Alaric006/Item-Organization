@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express, { Request, Response } from "express";
+import cors from "cors";
 
 // Import API endpoints
 import newItemRouter from "./routers/newItem";
@@ -14,6 +15,7 @@ const app = express();
 
 // Add JSON parsing abilities to express
 app.use(express.json());
+app.use(cors());
 
 app.get("/", (req: Request, res: Response) => {
     res.status(200).send("Hello World!");
