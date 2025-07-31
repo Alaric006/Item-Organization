@@ -1,4 +1,4 @@
-const BACKEND = process.env.BACKEND;
+const BACKEND = process.env.REACT_APP_BACKEND;
 
 console.log(`Backend URL: ${BACKEND}`);
 
