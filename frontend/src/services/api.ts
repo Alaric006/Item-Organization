@@ -1,4 +1,4 @@
-const BACKEND="http://localhost:3000"
+const BACKEND = process.env.BACKEND;
 
 export const addItem = async (itemName: string, assignedToUserId: string, listId: string) => {
     try {
